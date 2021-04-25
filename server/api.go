@@ -82,10 +82,12 @@ func (d *DefaultAPIServer) RegisterRoutes() {
 
 	var (
 		productHandler = initProductHandler(d)
+		orderHandler = initOrderHandler(d)
 	)
 
 	apiV1Public := d.Engine.Group("/api/v1")
 	apiV1Public.POST("/product/create", productHandler.CreateProduct)
+	apiV1Public.POST("/order/create", orderHandler.CreateOrder)
 }
 
 func (d *DefaultAPIServer) Run() (err error) {

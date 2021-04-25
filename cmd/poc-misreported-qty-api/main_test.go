@@ -11,6 +11,7 @@ import (
 	"poc-misreported-qty/model"
 	"poc-misreported-qty/server"
 	"poc-misreported-qty/sql"
+	"poc-misreported-qty/util/queue"
 	"poc-misreported-qty/util/validator"
 	"testing"
 
@@ -34,6 +35,7 @@ var (
 
 	apiV1Index         string
 	apiV1CreateProduct string
+	apiV1CreateOrder   string
 )
 
 func TestMain(m *testing.M) {
@@ -46,6 +48,7 @@ func TestMain(m *testing.M) {
 
 		dataRepository   = sql.NewSQLDataRepository(gormInstance)
 		validatorService = validator.NewDefaultValidatorService()
+		queueService = queue.NewDefaultQueueService(*amqpServerURL)
 	)
 
 	// set db global variable
@@ -60,6 +63,7 @@ func TestMain(m *testing.M) {
 		APIV1Config: &server.APIV1Config{
 			ValidatorService: validatorService,
 			DataRepository:   dataRepository,
+			QueueService: queueService,
 		},
 	}
 
@@ -73,6 +77,7 @@ func TestMain(m *testing.M) {
 	// set endpoint
 	apiV1Index = appURL
 	apiV1CreateProduct = fmt.Sprintf("%s/api/v1/product/create", appURL)
+	apiV1CreateOrder = fmt.Sprintf("%s/api/v1/order/create", appURL)
 
 	exitCode := m.Run()
 	s.Close()
@@ -130,6 +135,91 @@ func TestAPIV1CreateProduct(t *testing.T) {
 				"status": float64(200),
 				"results": map[string]interface{}{
 					"message": "Create product success",
+				},
+			})
+		})
+	})
+}
+
+func TestAPIV1CreateOrder(t *testing.T) {
+	Convey("Given poc API instance", t, func() {
+		refreshDB()
+		Convey("Should have error validation payload", func() {
+			params := &url.Values{}
+			params.Set("quantity", "10")
+
+			payload, status, err := httpPost(apiV1CreateOrder, params, "")
+			So(err, ShouldBeNil)
+			So(status, ShouldEqual, 400)
+			So(payload, ShouldResemble, map[string]interface{}{
+				"status": float64(400),
+				"error": map[string]interface{}{
+					"errors": map[string]interface{}{
+						"product_id": []interface{}{"required"},
+					},
+					"message": "Validation error",
+				},
+			})
+		})
+
+		Convey("Should have error validation, product not found", func() {
+			params := &url.Values{}
+			params.Set("quantity", "10")
+			params.Set("product_id", "1")
+
+			payload, status, err := httpPost(apiV1CreateOrder, params, "")
+			So(err, ShouldBeNil)
+			So(status, ShouldEqual, 400)
+			So(payload, ShouldResemble, map[string]interface{}{
+				"status": float64(400),
+				"error": map[string]interface{}{
+					"errors": map[string]interface{}{
+						"product_id": []interface{}{"not found"},
+					},
+					"message": "Validation error",
+				},
+			})
+		})
+
+		Convey("Should have error validation, invalid quantity", func() {
+			// Create new product
+			err := db.Exec("INSERT INTO products (name, quantity, price) VALUES ('Product Test', 10, 120000)").Error
+			So(err, ShouldBeNil)
+
+			params := &url.Values{}
+			params.Set("quantity", "20")
+			params.Set("product_id", "1")
+
+			payload, status, err := httpPost(apiV1CreateOrder, params, "")
+			So(err, ShouldBeNil)
+			So(status, ShouldEqual, 400)
+			So(payload, ShouldResemble, map[string]interface{}{
+				"status": float64(400),
+				"error": map[string]interface{}{
+					"errors": map[string]interface{}{
+						"quantity": []interface{}{"invalid"},
+					},
+					"message": "Validation error",
+				},
+			})
+		})
+
+		Convey("Should successfully create order", func() {
+			// Create new product
+			err := db.Exec("INSERT INTO products (name, quantity, price) VALUES ('Product Test', 10, 120000)").Error
+			So(err, ShouldBeNil)
+
+			params := &url.Values{}
+			params.Set("quantity", "5")
+			params.Set("product_id", "1")
+
+			payload, status, err := httpPost(apiV1CreateOrder, params, "")
+			So(err, ShouldBeNil)
+			So(status, ShouldEqual, 200)
+			So(payload, ShouldResemble, map[string]interface{}{
+				"status": float64(200),
+				"results": map[string]interface{}{
+					"message": "Create order success",
 				},
 			})
 		})

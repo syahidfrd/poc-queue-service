@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/gin-gonic/gin"
 	"poc-misreported-qty/model"
 	"poc-misreported-qty/util/queue"
 	"poc-misreported-qty/util/validator"
@@ -21,4 +22,46 @@ func NewOrderHandler(validatorService validator.Service, queueService queue.Serv
 		OrderStore: orderStore,
 	}
 	return
+}
+
+func (o *OrderHandler) CreateOrder(ctx *gin.Context) {
+	form := &struct {
+		ProductID uint64 `form:"product_id" json:"product_id" validate:"required"`
+		Quantity uint32 `form:"quantity" json:"quantity" validate:"required"`
+	}{}
+
+	if err := ctx.Bind(form); err != nil {
+		httpBindingErrorResponse(ctx, err)
+		return
+	}
+
+	if validationErrors := o.ValidatorService.ValidateForm(form); validationErrors != nil {
+		httpValidationErrorResponse(ctx, validationErrors)
+		return
+	}
+
+	product, _ := o.ProductStore.FindOneBy(map[string]interface{}{
+		"id": form.ProductID,
+	})
+
+	if !o.ProductStore.Exist(product) {
+		httpValidationErrorResponse(ctx, map[string][]string{
+			"product_id": {"not found"},
+		})
+		return
+	}
+
+	if product.GetQuantity() < form.Quantity {
+		httpValidationErrorResponse(ctx, map[string][]string{
+			"quantity": {"invalid"},
+		})
+		return
+	}
+
+	// Publish order product queue
+	o.QueueService.PublishOrderQueue(product.GetID(), form.Quantity)
+
+	httpOkResponse(ctx, map[string]interface{}{
+		"message": "Create order success",
+	})
 }
