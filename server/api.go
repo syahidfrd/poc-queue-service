@@ -57,8 +57,17 @@ func (d *DefaultAPIServer) InitEngine() {
 func initProductHandler(d *DefaultAPIServer) (productHandler *v1.ProductHandler) {
 	productHandler = v1.NewProductHandler(
 		d.APIV1Config.ValidatorService,
+		d.APIV1Config.DataRepository.ProductStore,
+	)
+	return
+}
+
+func initOrderHandler(d *DefaultAPIServer) (orderHandler *v1.OrderHandler) {
+	orderHandler = v1.NewOrderHandler(
+		d.APIV1Config.ValidatorService,
 		d.APIV1Config.QueueService,
 		d.APIV1Config.DataRepository.ProductStore,
+		d.APIV1Config.DataRepository.OrderStore,
 	)
 	return
 }
@@ -71,11 +80,12 @@ func (d *DefaultAPIServer) RegisterRoutes() {
 		})
 	})
 
-	var productHandler = initProductHandler(d)
+	var (
+		productHandler = initProductHandler(d)
+	)
 
 	apiV1Public := d.Engine.Group("/api/v1")
 	apiV1Public.POST("/product/create", productHandler.CreateProduct)
-	apiV1Public.POST("/product/order", productHandler.CreateOrder)
 }
 
 func (d *DefaultAPIServer) Run() (err error) {

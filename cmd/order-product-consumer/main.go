@@ -3,9 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/namsral/flag"
 	"github.com/streadway/amqp"
 	"net/url"
+	"poc-misreported-qty/model"
+	"poc-misreported-qty/sql"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -30,7 +35,7 @@ func main() {
 	gormInstance.DB().SetMaxOpenConns(*dbMaxOpenConnection)
 	gormInstance.DB().SetMaxIdleConns(*dbMaxIdleConnection)
 
-	//var dataRepository   = sql.NewSQLDataRepository(gormInstance)
+	var dataRepository   = sql.NewSQLDataRepository(gormInstance)
 
 	conn, err := amqp.Dial(*amqpServerURL)
 	if err != nil {
@@ -60,6 +65,28 @@ func main() {
 	go func() {
 		for d := range messages {
 			fmt.Printf("Received message: %s\n", d.Body)
+			splitMessage := strings.Split(string(d.Body), ":")
+			productID := splitMessage[0]
+			quantity := splitMessage[1]
+
+			product, _ := dataRepository.ProductStore.FindOneBy(map[string]interface{}{
+				"id": productID,
+			})
+
+			if !dataRepository.ProductStore.Exist(product) {
+				fmt.Printf("Product id=%s not found", productID)
+				continue
+			}
+
+			i, _ := strconv.Atoi(quantity)
+
+			order := model.NewOrder(uint32(i), product.GetID())
+			if err := dataRepository.OrderStore.Save(order); err != nil {
+				fmt.Println(err.Error())
+				continue
+			}
+
+			fmt.Printf("Create order id=%d success\n", order.GetID())
 		}
 	}()
 

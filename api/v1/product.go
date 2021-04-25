@@ -3,21 +3,18 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"poc-misreported-qty/model"
-	"poc-misreported-qty/util/queue"
 	"poc-misreported-qty/util/validator"
 )
 
 type ProductHandler struct {
 	ValidatorService validator.Service
-	QueueService     queue.Service
 	ProductStore     model.ProductStore
 }
 
-func NewProductHandler(validatorService validator.Service, queueService queue.Service, productStore model.ProductStore) (productHandler *ProductHandler) {
+func NewProductHandler(validatorService validator.Service, productStore model.ProductStore) (productHandler *ProductHandler) {
 	productHandler = &ProductHandler{
 		ValidatorService: validatorService,
 		ProductStore:     productStore,
-		QueueService: queueService,
 	}
 	return
 }
