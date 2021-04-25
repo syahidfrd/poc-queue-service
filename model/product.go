@@ -7,6 +7,7 @@ type (
 		ID       uint64 `gorm:"primary_key;auto_increment"`
 		Name     string
 		Quantity uint32
+		Price    uint64
 
 		CreatedAt time.Time
 		UpdatedAt time.Time
@@ -19,11 +20,11 @@ type (
 	}
 )
 
-
-func NewProduct(name string, quantity uint32) (product *Product) {
+func NewProduct(name string, quantity uint32, price uint64) (product *Product) {
 	product = &Product{}
 	product.SetName(name)
 	product.SetQuantity(quantity)
+	product.SetPrice(price)
 	return
 }
 
@@ -37,6 +38,10 @@ func (p *Product) GetName() string {
 
 func (p *Product) GetQuantity() uint32 {
 	return p.Quantity
+}
+
+func (p *Product) GetPrice() uint64 {
+	return p.Price
 }
 
 func (p *Product) GetCreatedAt() time.Time {
@@ -53,4 +58,8 @@ func (p *Product) SetName(name string) {
 
 func (p *Product) SetQuantity(quantity uint32) {
 	p.Quantity = quantity
+}
+
+func (p *Product) SetPrice(price uint64) {
+	p.Price = price
 }
