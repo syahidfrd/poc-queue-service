@@ -23,7 +23,21 @@ func (o *sqlOrderStore) Exist(order *model.Order) (isExist bool) {
 }
 
 func (o *sqlOrderStore) Save(order *model.Order) (err error) {
-	err = o.gormInstance.Save(order).Error
+	tx := o.gormInstance.Begin()
+	err = tx.Save(order).Error
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+
+	sql := "UPDATE products SET quantity = quantity - ? WHERE id = ?"
+	err = tx.Exec(sql, order.GetQuantity(), order.GetProductID()).Error
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+
+	tx.Commit()
 	return
 }
 
