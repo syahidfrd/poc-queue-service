@@ -67,6 +67,11 @@ func (d *DefaultAPIServer) RegisterRoutes() {
 			"message": "api up and running",
 		})
 	})
+
+	var productHandler = initProductHandler(d)
+
+	apiV1Public := d.Engine.Group("/api/v1")
+	apiV1Public.POST("/product/create", productHandler.CreateProduct)
 }
 
 func (d *DefaultAPIServer) Run() (err error) {

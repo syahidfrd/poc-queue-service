@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"github.com/namsral/flag"
 	"log"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"poc-misreported-qty/model"
 	"poc-misreported-qty/server"
@@ -30,7 +32,8 @@ var (
 		)
 	}
 
-	apiV1Index string
+	apiV1Index         string
+	apiV1CreateProduct string
 )
 
 func TestMain(m *testing.M) {
@@ -69,6 +72,7 @@ func TestMain(m *testing.M) {
 
 	// set endpoint
 	apiV1Index = appURL
+	apiV1CreateProduct = fmt.Sprintf("%s/api/v1/product/create", appURL)
 
 	exitCode := m.Run()
 	s.Close()
@@ -86,6 +90,47 @@ func TestIndex(t *testing.T) {
 			So(payload, ShouldResemble, map[string]interface{}{
 				"status":  float64(200),
 				"message": "api up and running",
+			})
+		})
+	})
+}
+
+func TestAPIV1CreateProduct(t *testing.T) {
+	Convey("Given poc API instance", t, func() {
+		refreshDB()
+		Convey("Should have error validation payload", func() {
+			params := &url.Values{}
+			params.Set("name", "Product test")
+			params.Set("quantity", "10")
+
+			payload, status, err := httpPost(apiV1CreateProduct, params, "")
+			So(err, ShouldBeNil)
+			So(status, ShouldEqual, 400)
+			So(payload, ShouldResemble, map[string]interface{}{
+				"status": float64(400),
+				"error": map[string]interface{}{
+					"errors": map[string]interface{}{
+						"price": []interface{}{"required"},
+					},
+					"message": "Validation error",
+				},
+			})
+		})
+
+		Convey("Should successfully create new product", func() {
+			params := &url.Values{}
+			params.Set("name", "Product test")
+			params.Set("quantity", "10")
+			params.Set("price", "20000")
+
+			payload, status, err := httpPost(apiV1CreateProduct, params, "")
+			So(err, ShouldBeNil)
+			So(status, ShouldEqual, 200)
+			So(payload, ShouldResemble, map[string]interface{}{
+				"status": float64(200),
+				"results": map[string]interface{}{
+					"message": "Create product success",
+				},
 			})
 		})
 	})
