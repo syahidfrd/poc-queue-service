@@ -7,6 +7,7 @@ import (
 	"net/http"
 	v1 "poc-misreported-qty/api/v1"
 	"poc-misreported-qty/model"
+	"poc-misreported-qty/util/queue"
 	"poc-misreported-qty/util/validator"
 	"time"
 )
@@ -20,6 +21,7 @@ type (
 
 	APIV1Config struct {
 		ValidatorService validator.Service
+		QueueService     queue.Service
 		DataRepository   model.DataRepository
 	}
 
@@ -55,6 +57,7 @@ func (d *DefaultAPIServer) InitEngine() {
 func initProductHandler(d *DefaultAPIServer) (productHandler *v1.ProductHandler) {
 	productHandler = v1.NewProductHandler(
 		d.APIV1Config.ValidatorService,
+		d.APIV1Config.QueueService,
 		d.APIV1Config.DataRepository.ProductStore,
 	)
 	return
@@ -72,6 +75,7 @@ func (d *DefaultAPIServer) RegisterRoutes() {
 
 	apiV1Public := d.Engine.Group("/api/v1")
 	apiV1Public.POST("/product/create", productHandler.CreateProduct)
+	apiV1Public.POST("/product/order", productHandler.CreateOrder)
 }
 
 func (d *DefaultAPIServer) Run() (err error) {

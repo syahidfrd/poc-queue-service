@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"poc-misreported-qty/server"
 	"poc-misreported-qty/sql"
+	"poc-misreported-qty/util/queue"
 	"poc-misreported-qty/util/validator"
 	"time"
 )
@@ -18,6 +19,7 @@ var (
 	dbConnectionString  = flag.String("db-connection-string", "postgres://poc:poc-123@localhost/poc?sslmode=disable", "Database connection string")
 	dbMaxOpenConnection = flag.Int("db-max-open-connection", 1, "Max database open connection")
 	dbMaxIdleConnection = flag.Int("db-max-idle-connection", 1, "Max database idle connection")
+	amqpServerURL       = flag.String("amqp-server-url", "amqp://guest:guest@localhost:5672", "AMQP server URL")
 )
 
 func main() {
@@ -39,6 +41,7 @@ func main() {
 	var (
 		dataRepository   = sql.NewSQLDataRepository(gormInstance)
 		validatorService = validator.NewDefaultValidatorService()
+		queueService     = queue.NewDefaultQueueService(*amqpServerURL)
 	)
 
 	var defaultServer = &server.DefaultAPIServer{
@@ -49,6 +52,7 @@ func main() {
 		APIV1Config: &server.APIV1Config{
 			DataRepository:   dataRepository,
 			ValidatorService: validatorService,
+			QueueService:     queueService,
 		},
 	}
 

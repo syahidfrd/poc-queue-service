@@ -11,4 +11,5 @@ require (
 	github.com/rs/zerolog v1.21.0
 	github.com/serenize/snaker v0.0.0-20201027110005-a7ad2135616e
 	github.com/smartystreets/goconvey v1.6.4
+	github.com/streadway/amqp v1.0.0
 )
