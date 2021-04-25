@@ -5,6 +5,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	v1 "poc-misreported-qty/api/v1"
 	"poc-misreported-qty/model"
 	"poc-misreported-qty/util/validator"
 	"time"
@@ -49,6 +50,14 @@ func (d *DefaultAPIServer) InitEngine() {
 	}))
 
 	d.Engine.Use(analyticMiddleware(d.Config.Test, []string{}))
+}
+
+func initProductHandler(d *DefaultAPIServer) (productHandler *v1.ProductHandler) {
+	productHandler = v1.NewProductHandler(
+		d.APIV1Config.ValidatorService,
+		d.APIV1Config.DataRepository.ProductStore,
+	)
+	return
 }
 
 func (d *DefaultAPIServer) RegisterRoutes() {
