@@ -1,0 +1,57 @@
+version: '3'
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: app.Dockerfile
+    ports:
+      - 8080:8080
+    restart: always
+    depends_on:
+      - database
+      - rabbitmq
+    networks:
+      - fullstack
+
+  consumer:
+    container_name: consumer
+    build:
+      context: .
+      dockerfile: cons.Dockerfile
+    restart: always
+    depends_on:
+      - database
+      - rabbitmq
+    networks:
+      - fullstack
+
+  database:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=poc
+      - POSTGRES_PASSWORD=poc-123
+      - POSTGRES_DB=poc
+    ports:
+      - 5432:5432
+    networks:
+      - fullstack
+    volumes:
+      - data:/var/lib/postgresql/data
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - fullstack
+
+volumes:
+  data:
+
+networks:
+  fullstack:
+    driver: bridge
