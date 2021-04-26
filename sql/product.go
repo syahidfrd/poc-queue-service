@@ -32,3 +32,8 @@ func (p *sqlProductStore) FindOneBy(query map[string]interface{}) (product *mode
 	err = p.gormInstance.First(product, query).Error
 	return
 }
+
+func (p *sqlProductStore) FindAll() (products []*model.Product, err error) {
+	err = p.gormInstance.Order("created_at DESC").Find(&products).Error
+	return
+}

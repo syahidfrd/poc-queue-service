@@ -46,3 +46,15 @@ func (p *ProductHandler) CreateProduct(ctx *gin.Context) {
 		"message": "Create product success",
 	})
 }
+
+func (p *ProductHandler) GetAllProduct(ctx *gin.Context) {
+	products, err := p.ProductStore.FindAll()
+	if err != nil {
+		httpInternalServerErrorResponse(ctx, err.Error())
+		return
+	}
+
+	httpOkResponse(ctx, map[string]interface{}{
+		"products": formatProducts(products),
+	})
+}

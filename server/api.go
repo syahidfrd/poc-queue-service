@@ -87,6 +87,7 @@ func (d *DefaultAPIServer) RegisterRoutes() {
 
 	apiV1Public := d.Engine.Group("/api/v1")
 	apiV1Public.POST("/product/create", productHandler.CreateProduct)
+	apiV1Public.GET("/product", productHandler.GetAllProduct)
 	apiV1Public.POST("/order/create", orderHandler.CreateOrder)
 }
 

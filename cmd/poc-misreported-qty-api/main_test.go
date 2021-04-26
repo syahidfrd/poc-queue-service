@@ -14,6 +14,7 @@ import (
 	"poc-misreported-qty/util/queue"
 	"poc-misreported-qty/util/validator"
 	"testing"
+	"time"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -35,6 +36,7 @@ var (
 
 	apiV1Index         string
 	apiV1CreateProduct string
+	apiV1GetAllProduct string
 	apiV1CreateOrder   string
 )
 
@@ -48,7 +50,7 @@ func TestMain(m *testing.M) {
 
 		dataRepository   = sql.NewSQLDataRepository(gormInstance)
 		validatorService = validator.NewDefaultValidatorService()
-		queueService = queue.NewDefaultQueueService(*amqpServerURL)
+		queueService     = queue.NewDefaultQueueService(*amqpServerURL)
 	)
 
 	// set db global variable
@@ -63,7 +65,7 @@ func TestMain(m *testing.M) {
 		APIV1Config: &server.APIV1Config{
 			ValidatorService: validatorService,
 			DataRepository:   dataRepository,
-			QueueService: queueService,
+			QueueService:     queueService,
 		},
 	}
 
@@ -77,6 +79,7 @@ func TestMain(m *testing.M) {
 	// set endpoint
 	apiV1Index = appURL
 	apiV1CreateProduct = fmt.Sprintf("%s/api/v1/product/create", appURL)
+	apiV1GetAllProduct = fmt.Sprintf("%s/api/v1/product", appURL)
 	apiV1CreateOrder = fmt.Sprintf("%s/api/v1/order/create", appURL)
 
 	exitCode := m.Run()
@@ -220,6 +223,45 @@ func TestAPIV1CreateOrder(t *testing.T) {
 				"status": float64(200),
 				"results": map[string]interface{}{
 					"message": "Create order success",
+				},
+			})
+		})
+	})
+}
+
+func TestAPIV1GetAllProduct(t *testing.T) {
+	Convey("Given poc API instance", t, func() {
+		refreshDB()
+		Convey("Should successfully return products data", func() {
+			// Create sample product
+			params := &url.Values{}
+			params.Set("name", "Product test")
+			params.Set("quantity", "10")
+			params.Set("price", "20000")
+
+			_, _, err := httpPost(apiV1CreateProduct, params, "")
+			So(err, ShouldBeNil)
+
+			var dbProductCreatedAt time.Time
+			err = db.Table("products").Select("created_at").Row().Scan(&dbProductCreatedAt)
+			So(err, ShouldBeNil)
+
+
+			payload, status, err := httpGet(apiV1GetAllProduct, nil, "")
+			So(err, ShouldBeNil)
+			So(status, ShouldEqual, 200)
+			So(payload, ShouldResemble, map[string]interface{}{
+				"status": float64(200),
+				"results": map[string]interface{}{
+					"products": []interface{}{
+						map[string]interface{}{
+							"id": float64(1),
+							"name": "Product test",
+							"quantity": float64(10),
+							"price": float64(20000),
+							"created_at": dbProductCreatedAt.Format(time.RFC3339),
+						},
+					},
 				},
 			})
 		})
