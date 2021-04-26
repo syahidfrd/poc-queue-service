@@ -12,7 +12,11 @@ This usually occurs because the system processes orders asynchronously, i.e. if 
 
 - Extract this repository.
 - Install all project dependencies.
-- Run `make test` to run tests and make sure that all tests are passing.
+
+### How to run test
+- Running db-test `make db-test`
+- Running rabbitmq-test `make rabbitmq-test`
+- Run test `make test`
 
 ### How to run
 - Run docker compose
