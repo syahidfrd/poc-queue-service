@@ -6,19 +6,28 @@ This usually occurs because the system processes orders asynchronously, i.e. if 
 !["Queue Flow"](https://i.ibb.co/rF6nBzH/Untitled-Diagram-1.png "Queue Flow")
 
 ### Requirements
+- Go 1.14
 - Docker and Docker Compose use [Docker CE](https://docs.docker.com/engine/installation) for Linux or [Docker Toolbox](https://www.docker.com/products/docker-toolbox) for Windows and Mac.
 
 ### Setting up Project
 
 - Extract this repository.
-- Install all project dependencies.
+- Install all project dependencies `go mod tidy`
 
 ### How to run test
 - Running db-test `make db-test`
 - Running rabbitmq-test `make rabbitmq-test`
 - Run test `make test`
 
-### How to run
+### How to run app
+- Running db `make db`
+- Running rabbitMQ `make rabbitmq`
+- Running dev server `make dev`
+- Running consumer `make consumer`
+- App running on `localhost:8080`
+- RabbitMQ management console `localhost:15672`, username/pass: `guest`
+
+### How to run app as docker container
 - Run docker compose
 ```bash
 docker-compose up -d --build
