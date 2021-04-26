@@ -23,3 +23,21 @@ func formatProducts(products []*model.Product) (result []map[string]interface{})
 	}
 	return
 }
+
+func formatOrder(order *model.Order) (result map[string]interface{}) {
+	result = map[string]interface{}{
+		"id": order.GetID(),
+		"quantity": order.GetQuantity(),
+		"created_at": order.GetCreatedAt().Format(time.RFC3339),
+		"product": formatProduct(order.GetProduct()),
+	}
+	return
+}
+
+func formatOrders(orders []*model.Order) (result []map[string]interface{}) {
+	result = []map[string]interface{}{}
+	for _, order := range orders {
+		result = append(result, formatOrder(order))
+	}
+	return
+}

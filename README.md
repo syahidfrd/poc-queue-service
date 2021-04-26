@@ -47,6 +47,12 @@ body:
   quantity: int
 }
 ```
+
+- Get all order
+```bash
+path: /api/v1/order
+```
+
 ### List of Useful Commands
 - `make db` -> Run PostgreSQL as docker container
 - `make rabbitmq` -> Run RabbitMQ as docker container

@@ -65,3 +65,15 @@ func (o *OrderHandler) CreateOrder(ctx *gin.Context) {
 		"message": "Create order success",
 	})
 }
+
+func (o *OrderHandler) GetAllOrder(ctx *gin.Context) {
+	orders, err := o.OrderStore.FindAll()
+	if err != nil {
+		httpInternalServerErrorResponse(ctx, err.Error())
+		return
+	}
+
+	httpOkResponse(ctx, map[string]interface{}{
+		"orders": formatOrders(orders),
+	})
+}

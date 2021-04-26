@@ -18,6 +18,7 @@ type (
 		Exist(product *Order) bool
 		Save(product *Order) error
 		FindOneBy(query map[string]interface{}) (*Order, error)
+		FindAll() ([]*Order, error)
 	}
 )
 

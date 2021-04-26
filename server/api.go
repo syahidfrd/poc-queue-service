@@ -89,6 +89,7 @@ func (d *DefaultAPIServer) RegisterRoutes() {
 	apiV1Public.POST("/product/create", productHandler.CreateProduct)
 	apiV1Public.GET("/product", productHandler.GetAllProduct)
 	apiV1Public.POST("/order/create", orderHandler.CreateOrder)
+	apiV1Public.GET("/order", orderHandler.GetAllOrder)
 }
 
 func (d *DefaultAPIServer) Run() (err error) {
