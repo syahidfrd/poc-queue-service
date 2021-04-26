@@ -80,13 +80,20 @@ func main() {
 
 			i, _ := strconv.Atoi(quantity)
 
+			// Validate quantity
+			if product.GetQuantity() < uint32(i) {
+				fmt.Println("Invalid quantity")
+				continue
+			}
+
+			// Create new order
 			order := model.NewOrder(uint32(i), product.GetID())
 			if err := dataRepository.OrderStore.Save(order); err != nil {
 				fmt.Println(err.Error())
 				continue
 			}
 
-			fmt.Printf("Create order id=%d success\n", order.GetID())
+			fmt.Printf("Create order id:%d success\n", order.GetID())
 		}
 	}()
 
