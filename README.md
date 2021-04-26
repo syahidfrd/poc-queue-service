@@ -19,14 +19,6 @@ This usually occurs because the system processes orders asynchronously, i.e. if 
 - Running rabbitmq-test `make rabbitmq-test`
 - Run test `make test`
 
-### How to run app
-- Running db `make db`
-- Running rabbitMQ `make rabbitmq`
-- Running dev server `make dev`
-- Running consumer `make consumer`
-- App running on `localhost:8080`
-- RabbitMQ management console `localhost:15672`, username/pass: `guest`
-
 ### How to run app as docker container
 - Run docker compose
 ```bash
