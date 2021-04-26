@@ -6,12 +6,7 @@ This usually occurs because the system processes orders asynchronously, i.e. if 
 !["Queue Flow"](https://i.ibb.co/rF6nBzH/Untitled-Diagram-1.png "Queue Flow")
 
 ### Requirements
-
-- Golang = 1.14
-- PostgreSQL = 12
-- Docker Use [Docker CE](https://docs.docker.com/engine/installation) for Linux or [Docker Toolbox](https://www.docker.com/products/docker-toolbox) for Windows and Mac.
-- RabbitMQ = 3-management
-- Go modules is a collection of Go packages stored in a file tree with a `go.mod` file at its root.
+- Docker and Docker Compose use [Docker CE](https://docs.docker.com/engine/installation) for Linux or [Docker Toolbox](https://www.docker.com/products/docker-toolbox) for Windows and Mac.
 
 ### Setting up Project
 
@@ -19,6 +14,34 @@ This usually occurs because the system processes orders asynchronously, i.e. if 
 - Install all project dependencies.
 - Run `make test` to run tests and make sure that all tests are passing.
 
+### How to run
+- Run docker compose
+```bash
+docker-compose up -d --build
+```
+- App running on `localhost:8080`
+- RabbitMQ management console `localhost:15672`, username/pass: `guest`
+
+### API Spec
+- Create product
+```bash
+path: /api/v1/product/create
+body:
+{
+  name: string,
+  quantity: int,
+  price: int
+}
+```
+- Create order
+```bash
+path: /api/v1/order/create
+body:
+{
+  product_id: int,
+  quantity: int
+}
+```
 ### List of Useful Commands
 - `make db` -> Run PostgreSQL as docker container
 - `make rabbitmq` -> Run RabbitMQ as docker container
