@@ -33,6 +33,11 @@ body:
   price: int
 }
 ```
+- Get all product
+```bash
+path: /api/v1/product
+```  
+
 - Create order
 ```bash
 path: /api/v1/order/create
