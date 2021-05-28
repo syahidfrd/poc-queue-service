@@ -1,5 +1,5 @@
 dev:
-	go run cmd/poc-misreported-qty-api/main.go
+	go run cmd/poc-queue-service/main.go
 
 consumer:
 	go run cmd/order-product-consumer/main.go
@@ -18,7 +18,7 @@ rabbitmq:
 
 build:
 	rm -f engine
-	go build -o engine cmd/poc-misreported-qty-api/main.go
+	go build -o engine cmd/poc-queue-service/main.go
 
 test:
-	go test ./cmd/poc-misreported-qty-api -v
+	go test ./cmd/poc-queue-service -v

@@ -2,7 +2,7 @@ package sql
 
 import (
 	"github.com/jinzhu/gorm"
-	"poc-misreported-qty/model"
+	"poc-queue-service/model"
 )
 
 type sqlOrderStore struct {

@@ -17,6 +17,6 @@ COPY . .
 RUN go mod tidy
 
 # Build the application
-RUN go build -o binary cmd/poc-misreported-qty-api/main.go
+RUN go build -o binary cmd/poc-queue-service/main.go
 
 ENTRYPOINT ["/app/binary"]

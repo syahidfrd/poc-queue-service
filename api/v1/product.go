@@ -2,8 +2,8 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"poc-misreported-qty/model"
-	"poc-misreported-qty/util/validator"
+	"poc-queue-service/model"
+	"poc-queue-service/util/validator"
 )
 
 type ProductHandler struct {

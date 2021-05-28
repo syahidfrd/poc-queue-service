@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"poc-misreported-qty/model"
+	"poc-queue-service/model"
 	"time"
 )
 

@@ -6,10 +6,10 @@ import (
 	"github.com/namsral/flag"
 	"log"
 	"net/url"
-	"poc-misreported-qty/server"
-	"poc-misreported-qty/sql"
-	"poc-misreported-qty/util/queue"
-	"poc-misreported-qty/util/validator"
+	"poc-queue-service/server"
+	"poc-queue-service/sql"
+	"poc-queue-service/util/queue"
+	"poc-queue-service/util/validator"
 	"time"
 )
 

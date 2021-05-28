@@ -5,10 +5,10 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	v1 "poc-misreported-qty/api/v1"
-	"poc-misreported-qty/model"
-	"poc-misreported-qty/util/queue"
-	"poc-misreported-qty/util/validator"
+	v1 "poc-queue-service/api/v1"
+	"poc-queue-service/model"
+	"poc-queue-service/util/queue"
+	"poc-queue-service/util/validator"
 	"time"
 )
 
