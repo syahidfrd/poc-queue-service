@@ -24,12 +24,12 @@ This usually occurs because the system processes orders asynchronously, i.e. if 
 - Install all project dependencies `go mod tidy`
 
 ### How to run test
-- Running db-test `make db-test`
-- Running rabbitmq-test `make rabbitmq-test`
-- Run test `make test`
+- Run the db test `make db-test`
+- Run the rabbitmq test `make rabbitmq-test`
+- Run the test `make test`
 
 ### How to run app as docker container
-- Run docker compose
+- Run the docker compose
 ```bash
 docker-compose up -d --build
 ```
