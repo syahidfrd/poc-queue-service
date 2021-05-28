@@ -1,4 +1,13 @@
-# POC Misreported Quantity
+# POC Queue Service - Online Store
+
+### Context
+Customers were able to put items in their cart, check out, and then pay. After several days, many of our customers received calls from
+our Customer Service department stating that their orders have been canceled due to stock unavailability.
+
+### Additional Fact
+- Our inventory quantities are often misreported, and some items even go as far as having a negative inventory quantity.
+- Because of these misreported inventory quantities, the Order Processing department was unable to fulfill a lot of orders, and thus
+requested help from our Customer Service department to call our customers and notify them that we have had to cancel their orders.
 
 ### An explanation of why it happened and the solution
 This usually occurs because the system processes orders asynchronously, i.e. if there are 2 or more customers making a product order at the same time, the system will perform all of these tasks simultaneously. This results in an incorrectly reported product quantity, as we must always check the product stock and ensure its availability. The solution is to use a queuing system with the FIFO concept, with this concept processes that previously occurred asynchronously become sequential and take turns.
