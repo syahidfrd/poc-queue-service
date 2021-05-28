@@ -16,10 +16,10 @@ import (
 var (
 	port                = flag.String("port", "8080", "Port where the app listen to")
 	debug               = flag.Bool("debug", true, "Run app in debug mode")
-	dbConnectionString  = flag.String("db-connection-string", "postgres://poc:poc-123@database/poc?sslmode=disable", "Database connection string")
+	dbConnectionString  = flag.String("db-connection-string", "postgres://poc:poc-123@localhost/poc?sslmode=disable", "Database connection string")
 	dbMaxOpenConnection = flag.Int("db-max-open-connection", 1, "Max database open connection")
 	dbMaxIdleConnection = flag.Int("db-max-idle-connection", 1, "Max database idle connection")
-	amqpServerURL       = flag.String("amqp-server-url", "amqp://guest:guest@rabbitmq:5672", "AMQP server URL")
+	amqpServerURL       = flag.String("amqp-server-url", "amqp://guest:guest@localhost:5672", "AMQP server URL")
 )
 
 func main() {

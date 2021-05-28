@@ -5,6 +5,11 @@ services:
     build:
       context: .
       dockerfile: app.Dockerfile
+    command:
+      [
+          '-db-connection-string=postgres://poc:poc-123@database/poc?sslmode=disable',
+          '-amqp-server-url=amqp://guest:guest@rabbitmq:5672'
+      ]
     ports:
       - 8080:8080
     restart: always
@@ -19,6 +24,11 @@ services:
     build:
       context: .
       dockerfile: cons.Dockerfile
+    command:
+      [
+          '-db-connection-string=postgres://poc:poc-123@database/poc?sslmode=disable',
+          '-amqp-server-url=amqp://guest:guest@rabbitmq:5672'
+      ]
     restart: always
     depends_on:
       - database
